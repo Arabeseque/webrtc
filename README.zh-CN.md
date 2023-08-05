@@ -1,87 +1,50 @@
-<p align='center'>
-  <img src='https://user-images.githubusercontent.com/11247099/111864893-a457fd00-899e-11eb-9f05-f4b88987541d.png' alt='Vitesse - Opinionated Vite Starter Template' width='600'/>
-</p>
+#  特性
 
-<h6 align='center'>
-<a href="https://vitesse-lite.netlify.app/">在线 Demo</a>
-</h6>
+* 使用 vitesse-lite 作为模板代码
+* 包含多种 webRTC 实践
+* 基于浏览器的多媒体即时通信
 
-<h5 align='center'>
-<b>轻量版的 <a href="https://github.com/antfu/vitesse">Vitesse</a></b>
-</h5>
+## 基础环境
 
-<br>
+实现一个会议系统，除了 `WebRTC` 之外，我们还需要一些硬件上或者软件上的支持，才能配合我们完成目标，条件如下：
 
-<p align='center'>
-<a href="https://github.com/antfu/vitesse-lite/blob/main/README.md">English</a> | <b>简体中文</b>
-</p>
+1. 首先需要一个可以支持 `WebRTC` 的浏览器，在这里我列举下到目前为止支持的浏览器：
 
-<br>
+- 谷歌 Chrome(桌面和安卓)；
+- 火狐浏览器(桌面版和安卓版)；
+- Safari；
+- Opera(桌面和安卓)；
+- iOS (mobile Safari)；
+- 微软 Edge；
+- 360 浏览器极速模式下；
+- ……（还有几个不常用的浏览器，我们就不在这里写了。）
 
-## 特性
+2. 要获取浏览器所在设备的摄像头、麦克风实现画面和声音的传输，这就要求你的电脑有摄像头和麦克风。
 
-- ⚡️ [Vue 3](https://github.com/vuejs/core), [Vite 3](https://github.com/vitejs/vite), [pnpm](https://pnpm.io/), [ESBuild](https://github.com/evanw/esbuild) - 就是快！
+# webRTC 会话流程
 
-- 🗂 [基于文件的路由](./src/pages)
 
-- 📦 [组件自动化加载](./src/components)
 
-- 🎨 [UnoCSS](https://github.com/unocss/unocss) - 高性能且极具灵活性的即时原子化 CSS 引擎
+![image-20230805183507248](https://raw.githubusercontent.com/Arabeseque/pictureBed/master/img/202308051835386.png)
 
-- 😃 [各种图标集为你所用](https://github.com/antfu/unocss/tree/main/packages/preset-icons)
 
-- 🔥 使用 [新的 `<script setup>` 语法](https://github.com/vuejs/rfcs/pull/227)
 
-- ✅ 使用 [Vitest](http://vitest.dev/) 进行单元和组件测试
+对照这个流程图，我们再来口述一边，上图中 **A** 为**caller（呼叫端），B为callee（被呼叫端）。**
 
-- 🦾 TypeScript, 当然
+1. 首先 A 呼叫 B，呼叫之前我们一般通过实时通信协议`WebSocket`即可，让对方能收到信息。
 
-- ☁️ 零配置部署 Netlify
+1. B 接受应答，A 和 B 均开始初始化`PeerConnection `实例，用来关联 A 和 B 的`SDP`会话信息。
 
-<br>
+1. A 调用`createOffer`创建信令，同时通过`setLocalDescription`方法在本地实例`PeerConnection`中储存一份（**图中流程①**）。
 
-完整特性,请查看 [Vitesse](https://github.com/antfu/vitesse)
+1. 然后调用信令服务器将 A 的`SDP`转发给 B（**图中流程②**）。
 
-## 从 [Vitesse](https://github.com/antfu/vitesse) 中删除了以下特性
+1. B 接收到 A 的`SDP`后调用`setRemoteDescription`，将其储存在初始化好的`PeerConnection`实例中（**图中流程③**）。
 
-- ~~i18n~~
-- ~~Layouts~~
-- ~~SSG~~
-- ~~PWA~~
-- ~~Markdown~~
+1. B 同时调用`createAnswer`创建应答`SDP`，并调用`setLocalDescription`储存在自己本地`PeerConnection`实例中（**图中流程④**）。
 
-## 预配置
+1. B 继续将自己创建的应答`SDP`通过服务器转发给 A（**图中流程⑤**）。
 
-### UI 框架
+1. A 调用`setRemoteDescription`将 B 的`SDP`储存在本地`PeerConnection`实例（**图中流程⑤**）。
 
-- [UnoCSS](https://github.com/antfu/unocss) - 高性能且极具灵活性的即时原子化 CSS 引擎
-
-### Icons
-
-- [Iconify](https://iconify.design) - 使用任意的图标集，浏览：[🔍Icônes](https://icones.netlify.app/)
-- [UnoCSS 的纯 CSS 图标方案](https://github.com/antfu/unocss/tree/main/packages/preset-icons)
-
-### 插件
-
-- [Vue Router](https://github.com/vuejs/vue-router)
-  - [`vite-plugin-pages`](https://github.com/hannoeru/vite-plugin-pages) - 以文件系统为基础的路由
-- [`unplugin-auto-import`](https://github.com/antfu/unplugin-auto-import) - 直接使用 Composition API 等，无需导入
-- [`unplugin-vue-components`](https://github.com/antfu/unplugin-vue-components) - 自动加载组件
-- [`unplugin-vue-macros`](https://github.com/sxzz/unplugin-vue-macros) - 探索并扩展更多的宏和语法糖到 Vue 中
-- [VueUse](https://github.com/antfu/vueuse) - 实用的 Composition API 工具合集
-
-## 现在可以试试!
-
-### GitHub 模板
-
-[使用这个模板创建仓库](https://github.com/antfu/vitesse-lite/generate).
-
-### 克隆到本地
-
-如果您更喜欢使用更干净的 git 历史记录手动执行此操作
-
-```bash
-npx degit antfu/vitesse-lite my-vitesse-app
-cd my-vitesse-app
-pnpm i # 如果你没装过 pnpm, 可以先运行: npm install -g pnpm
-```
+1. 在会话的同时，从图中我们可以发现有个`ice candidate`，这个信息就是 ice 候选信息，A 发给 B 的 B 储存，B 发给 A 的 A 储存，直至候选完成。
